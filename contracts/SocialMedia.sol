@@ -64,13 +64,15 @@ contract SocialMedia {
         userAddresses.push(msg.sender);
     }
 
-    function login() public {
-        require(!users[msg.sender].isLoggedIn, "User already logged in");
-        require(
-            bytes(users[msg.sender].username).length > 0,
-            "Please create user account"
-        );
-        users[msg.sender].isLoggedIn = true;
+    function login() public view returns (bool) {
+        // require(!users[msg.sender].isLoggedIn, "User already logged in");
+        // require(
+        //     bytes(users[msg.sender].username).length > 0,
+        //     "Please create user account"
+        // );
+        // users[msg.sender].isLoggedIn = true;
+        if (users[msg.sender].isLoggedIn) return true;
+        else return false;
     }
 
     function logout() public {
@@ -246,9 +248,13 @@ contract SocialMedia {
     }
 
     // Reward Managment
-    function rewardEngagement(address payable _to) public payable {
+    function rewardEngagement(
+        address payable _to,
+        uint256 _amount
+    ) public payable {
         require(_to != address(0), "Invalid recipient address");
-        require(msg.value > 0, "Invalid amount");
-        _to.transfer(msg.value);
+        require(_amount > 0 && _amount <= msg.value, "Invalid amount");
+
+        _to.transfer(_amount); // Transfer ethers to the recipient
     }
 }
